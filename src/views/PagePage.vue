@@ -7,6 +7,6 @@
 import Home from "@/components/Home.vue";
 import { useQueryClient } from "@tanstack/vue-query";
 const qClient = useQueryClient();
-console.log(qClient.getQueryCache());
+console.log(qClient.getQueryData(["posts"]));
 </script>
 <style scoped></style>

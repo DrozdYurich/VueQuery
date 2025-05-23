@@ -27,7 +27,7 @@ const getData = async () => {
     console.error(error);
   }
 };
-const { data, isError, isLoading, error } = useQuery({
+const { data, isError, isSuccess, isLoading, error } = useQuery({
   queryKey: ["posts"],
   queryFn: getData,
   staleTime: 1000 * 60 * 5,
