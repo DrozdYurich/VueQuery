@@ -23,8 +23,7 @@ import { useQuery } from "@tanstack/vue-query";
 const getData = async () => {
   try {
     const response = await axios.get("/api/posts");
-    console.log(response);
-    data.value = response.data;
+    return response.data;
   } catch (error) {
     console.error(error);
   }
