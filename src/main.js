@@ -1,14 +1,22 @@
-import './assets/main.css'
+import "./assets/main.css";
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
 
-import App from './App.vue'
-import router from './router'
+import App from "./App.vue";
+import router from "./router";
 
-const app = createApp(App)
+const app = createApp(App);
+app.use(createPinia());
+app.use(router);
+// main.js
+async function prepare() {
+  if (import.meta.env.DEV) {
+    const { worker } = await import("./mocks/browser");
+    await worker.start();
+  }
+}
 
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
+prepare().then(() => {
+  app.mount("#app");
+});
