@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Home</h1>
-    <div v-if="loading">loading</div>
+    <div v-if="isLoading">loading</div>
 
     <div v-else>
       <CartInfo
@@ -18,8 +18,8 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import CartInfo from "./CartInfo.vue";
 import { useQuery } from "@tanstack/vue-query";
-const data = ref();
-const loading = ref(false);
+// const data = ref();
+// const loading = ref(false);
 const getData = async () => {
   try {
     loading.value = true;
@@ -33,8 +33,13 @@ const getData = async () => {
     console.error(error);
   }
 };
-onMounted(() => {
-  getData();
+const { data, isError, isLoading, error } = useQuery({
+  queryKey: ["posts"],
+  queryFn: getData,
+  staleTime: 1000 * 60 * 5,
 });
+if (isError) {
+  console.error(error);
+}
 </script>
 <style scoped></style>
