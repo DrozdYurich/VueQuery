@@ -22,14 +22,10 @@ import { useQuery } from "@tanstack/vue-query";
 // const loading = ref(false);
 const getData = async () => {
   try {
-    loading.value = true;
-    console.log(loading);
     const response = await axios.get("/api/posts");
     console.log(response);
     data.value = response.data;
-    loading.value = false;
   } catch (error) {
-    loading.value = false;
     console.error(error);
   }
 };
