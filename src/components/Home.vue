@@ -17,7 +17,7 @@
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import CartInfo from "./CartInfo.vue";
-
+import { useQuery } from "@tanstack/vue-query";
 const data = ref();
 const loading = ref(false);
 const getData = async () => {
