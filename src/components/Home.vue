@@ -2,14 +2,21 @@
   <div>
     <h1>Home</h1>
     <div v-if="loading">loading</div>
+
     <div v-else>
-      {{ data }}
+      <CartInfo
+        v-for="d in data"
+        :title="d.title"
+        :key="d.id"
+        :views="d.views"
+      />
     </div>
   </div>
 </template>
 <script setup>
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import CartInfo from "./CartInfo.vue";
 
 const data = ref();
 const loading = ref(false);
