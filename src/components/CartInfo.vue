@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card bg-amber-400">
     <h1>{{ title }}</h1>
     <p>{{ views }}</p>
   </div>
