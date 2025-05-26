@@ -57,10 +57,19 @@ import { Button, InputNumber, InputText, Message } from "primevue";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 const qClient = useQueryClient();
+const addTasks = async (data) => {
+  try {
+    const response = await axios.post("/api/posts", data);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 const {
   data,
   isError,
-  addMut: mutate,
+  mutate: addMut,
 } = useMutation({
   mutationFn: addTasks,
   onSuccess: (data) => {
@@ -79,15 +88,6 @@ const schema = computed(() => {
   };
   return yup.object().shape(baseSchema);
 });
-const addTasks = async (data) => {
-  try {
-    const response = await axios.post("/api/posts", { data });
-    console.log(response);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 const resolver = computed(() => yupResolver(schema.value));
 const onFormSubmit = ({ valid }) => {
