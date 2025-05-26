@@ -73,7 +73,8 @@ const defaultValues = {
 };
 const { mutate: addMut } = useMutation({
   mutationFn: addTasks,
-  onSuccess: () => {
+  onSuccess: (data) => {
+    console.log("Mutation success data:", data);
     qClient.invalidateQueries(["posts"]);
     Object.assign(initialValues, defaultValues);
   },

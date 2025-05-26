@@ -33,7 +33,8 @@ const removeDel = async () => {
 const qClient = useQueryClient();
 const { mutate: del } = useMutation({
   mutationFn: removeDel,
-  onSuccess: () => {
+  onSuccess: (data) => {
+    console.log("Mutation success data:", data);
     qClient.invalidateQueries(["posts"]);
   },
 });
