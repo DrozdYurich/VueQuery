@@ -60,22 +60,25 @@ const qClient = useQueryClient();
 const addTasks = async (data) => {
   try {
     const response = await axios.post("/api/posts", data);
-    console.log(response);
+
     return response.data;
   } catch (error) {
     console.error(error);
   }
 };
-const {
-  data,
-  isError,
-  mutate: addMut,
-} = useMutation({
+const defaultValues = {
+  id: "",
+  title: "",
+  views: "",
+};
+const { mutate: addMut } = useMutation({
   mutationFn: addTasks,
-  onSuccess: (data) => {
+  onSuccess: () => {
     qClient.invalidateQueries(["posts"]);
+    Object.assign(initialValues, defaultValues);
   },
 });
+
 const initialValues = reactive({
   id: "",
   title: "",
@@ -92,13 +95,12 @@ const schema = computed(() => {
 const resolver = computed(() => yupResolver(schema.value));
 const onFormSubmit = ({ valid }) => {
   if (valid) {
-    console.log(initialValues);
     const falidData = {
       title: initialValues.title,
       id: uuidv4(),
       views: initialValues.views,
     };
-    console.log(falidData);
+
     addMut(falidData);
   }
 };
