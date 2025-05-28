@@ -40,7 +40,7 @@ const { data, isError, isLoading, error } = useQuery({
   justify-items: center;
   align-items: center;
 }
-@media (max-width: 370px) {
+@media (max-width: 550px) {
   .inf {
     grid-template-columns: 1fr;
   }

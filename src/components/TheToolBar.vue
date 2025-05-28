@@ -1,8 +1,8 @@
 <template>
   <Toolbar
-    class="my-custom-class"
     :style="{
       position: 'fixed',
+      bottom: '0',
       left: '0',
       width: '100%',
       zIndex: '50',
@@ -57,16 +57,6 @@ const items = ref([
 <style>
 .p-toolbar-center {
   width: 60%;
-  display: flex;
-  justify-content: space-around;
-}
-.my-custom-class {
-  position: fixed;
-  left: 0;
-  width: 91.666667%;
-  z-index: 50;
-  background-color: #fff;
-  padding: 0;
   display: flex;
   justify-content: space-around;
 }

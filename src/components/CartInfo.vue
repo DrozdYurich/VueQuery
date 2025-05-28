@@ -7,7 +7,7 @@
       :style="{
         height: '25px',
       }"
-      @click=""
+      @click="goToArenda"
       >Оформить</Button
     >
   </div>
@@ -16,31 +16,15 @@
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import axios from "axios";
 import { Button } from "primevue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
   title: String,
   views: Number,
   id: String,
 });
-const removeDel = async () => {
-  try {
-    const response = await axios.delete(`/api/posts/${props.id}`);
-    console.log(response);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
-const qClient = useQueryClient();
-const { mutate: del } = useMutation({
-  mutationFn: removeDel,
-  onSuccess: (data) => {
-    console.log("Mutation success data:", data);
-    qClient.invalidateQueries(["posts"]);
-  },
-});
-
-const remove = () => {
-  del();
+const goToArenda = () => {
+  router.push({ name: "arenda", params: { id: props.id } });
 };
 </script>
 <style scoped>
@@ -52,7 +36,7 @@ const remove = () => {
   width: 40vw;
   border-radius: 10px;
 }
-@media (max-width: 370px) {
+@media (max-width: 550px) {
   .card {
     width: 80vw;
   }
