@@ -76,6 +76,29 @@ import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  // Проверяем корректность даты
+  if (isNaN(date)) {
+    return "Некорректная дата";
+  }
+
+  // Форматируем компоненты даты и времени с ведущими нулями
+  const pad = (num) => num.toString().padStart(2, "0");
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1); // Месяцы с 0
+  const day = pad(date.getDate());
+
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  // Формат: ГГГГ-ММ-ДД ЧЧ:ММ:СС
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 const goToPage = () => {
   router.push({ name: "page" });
 };
@@ -121,7 +144,7 @@ const onFormSubmit = ({ valid }) => {
   console.log("fffs");
   if (valid) {
     const falidData = {
-      data: initialValues.data,
+      data: formatDate(initialValues.data),
       id: route.params.id,
       views: initialValues.views,
     };
