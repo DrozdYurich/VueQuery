@@ -105,7 +105,30 @@ function formatDate(dateString) {
     date.getSeconds()
   )}`;
 }
+const addPover = async (data) => {
+  try {
+    const response = await axios.post("/api/pover", data);
 
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+const { mutate: addPov } = useMutation({
+  mutationFn: addPover,
+  onSuccess: () => {
+    // После успешного добавления:
+    // 1. Сбрасываем форму
+    Object.assign(initialValues, defaultValues);
+    // 2. Обновляем список заказов
+    qClient.invalidateQueries(["pover"]);
+    // 3. Перенаправляем на страницу заказов
+    router.push({ name: "orders" }); // Убедитесь что у вас есть такой маршрут
+  },
+  onError: (error) => {
+    console.error("Ошибка при добавлении заказа:", error);
+  },
+});
 const goToPage = () => {
   router.push({ name: "page" });
 };
@@ -138,12 +161,12 @@ const onFormSubmit = ({ valid }) => {
       views: initialValues.views,
     };
     console.log(falidData, "Submitted data");
+    addPov(falidData);
   }
 };
 
 // Стоимость в час
 const pricePerHour = 10;
-
 // Реактивное значение времени начала аренды (можно получать из API или роута)
 const rentalStart = new Date(); // текущее время как начало аренды
 // Вычисляемая дата окончания аренды на основе views (цены)
@@ -163,7 +186,6 @@ const calculatedPrice = computed(() => {
   return hours * pricePerHour;
 });
 
-// Следим за изменениями цены и обновляем дату
 watch(
   () => initialValues.views,
   (newPrice) => {
@@ -175,8 +197,6 @@ watch(
     }
   }
 );
-
-// Следим за изменениями даты и обновляем цену
 watch(
   () => initialValues.data,
   (newDate) => {

@@ -7,6 +7,11 @@
       <p>Загружаем ваши заказы...</p>
     </div>
 
+    <div v-else-if="error" class="error-state">
+      <p>Ошибка при загрузке заказов: {{ error.message }}</p>
+      <button @click="refetch" class="retry-button">Попробовать снова</button>
+    </div>
+
     <div v-else-if="data && data.length > 0" class="orders-grid">
       <CartInfo
         v-for="n in data"
@@ -55,12 +60,11 @@ const getPover = async () => {
     const resp = await axios.get("/api/pover");
     return resp.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error("Не удалось загрузить заказы");
   }
 };
 
-const { data, isLoading } = useQuery({
+const { data, isLoading, error, refetch } = useQuery({
   queryKey: ["pover"],
   queryFn: getPover,
   staleTime: 1000 * 60 * 5,
