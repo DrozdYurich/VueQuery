@@ -49,6 +49,7 @@
           showTime
           hourFormat="24"
           fluid
+          :minDate="new Date()"
           class="border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md"
         />
 
@@ -80,7 +81,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from "vue";
+import { watch, computed, reactive } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
@@ -117,8 +118,12 @@ const initialValues = reactive({
 });
 
 const schema = computed(() => {
+  const now = new Date();
   return yup.object().shape({
-    data: yup.date().required("Укажите дату и время окончания поездки"),
+    data: yup
+      .date()
+      .required("Укажите дату и время окончания поездки")
+      .min(now, "Дата не может быть раньше текущего времени"),
     views: yup.number().required("Цена обязательна"),
   });
 });
@@ -135,6 +140,53 @@ const onFormSubmit = ({ valid }) => {
     console.log(falidData, "Submitted data");
   }
 };
+
+// Стоимость в час
+const pricePerHour = 10;
+
+// Реактивное значение времени начала аренды (можно получать из API или роута)
+const rentalStart = new Date(); // текущее время как начало аренды
+// Вычисляемая дата окончания аренды на основе views (цены)
+const calculatedEndDate = computed(() => {
+  if (!initialValues.views || isNaN(initialValues.views)) return "";
+  const hours = initialValues.views / pricePerHour;
+  const endDate = new Date(rentalStart);
+  endDate.setHours(endDate.getHours() + hours);
+  return endDate;
+});
+
+// Вычисляемая цена на основе даты окончания
+const calculatedPrice = computed(() => {
+  if (!initialValues.data) return "";
+  const diffMs = new Date(initialValues.data) - rentalStart;
+  const hours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
+  return hours * pricePerHour;
+});
+
+// Следим за изменениями цены и обновляем дату
+watch(
+  () => initialValues.views,
+  (newPrice) => {
+    if (newPrice && !isNaN(newPrice)) {
+      const hours = newPrice / pricePerHour;
+      const endDate = new Date(rentalStart);
+      endDate.setHours(endDate.getHours() + hours);
+      initialValues.data = endDate;
+    }
+  }
+);
+
+// Следим за изменениями даты и обновляем цену
+watch(
+  () => initialValues.data,
+  (newDate) => {
+    if (newDate && !isNaN(new Date(newDate))) {
+      const diffMs = new Date(newDate) - rentalStart;
+      const hours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
+      initialValues.views = hours * pricePerHour;
+    }
+  }
+);
 </script>
 
 <style scoped>
