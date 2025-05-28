@@ -12,7 +12,7 @@
         initialValue=""
         class="flex flex-col gap-1"
       >
-        <InputNumber placeholder="views" v-model="initialValues.views" />
+        <InputNumber placeholder="Цена" v-model="initialValues.views" />
         <Message
           v-if="$field?.invalid"
           severity="error"
@@ -27,11 +27,17 @@
         initialValue=""
         class="flex flex-col gap-1"
       >
-        <InputText
-          type="text"
+        <label for="data" class="font-bold block mb-2">
+          Дата окончания аренды
+        </label>
+        <DatePicker
+          id="data"
           v-model="initialValues.title"
-          placeholder="Last Name"
+          showTime
+          hourFormat="24"
+          fluid
         />
+
         <Message
           v-if="$field?.invalid"
           severity="error"
@@ -64,7 +70,7 @@ import { v4 as uuidv4 } from "uuid";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
 import { Form, FormField } from "@primevue/forms";
-import { Button, InputNumber, InputText, Message } from "primevue";
+import { Button, DatePicker, InputNumber, InputText, Message } from "primevue";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
