@@ -65,4 +65,7 @@ const items = ref([
   background: #e0e7ff !important; /* Пример активного цвета */
   color: #1d4ed8 !important;
 }
+.p-button-label {
+  font-size: 20px;
+}
 </style>

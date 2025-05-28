@@ -6,6 +6,7 @@
 <script setup></script>
 <style scoped>
 .home {
-  height: 93vh;
+  height: 86vh;
+  overflow-y: scroll;
 }
 </style>

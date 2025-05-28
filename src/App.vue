@@ -4,6 +4,8 @@ import TheToolBar from "./components/TheToolBar.vue";
 </script>
 
 <template>
-  <RouterView />
-  <TheToolBar />
+  <div class="h-full">
+    <RouterView />
+    <TheToolBar />
+  </div>
 </template>

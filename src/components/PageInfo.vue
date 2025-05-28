@@ -1,6 +1,9 @@
 <template>
   <div class="card flex justify-center">
-    <div v-if="isLoading">loading</div>
+    <div v-if="isLoading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Загружаем повербанки...</p>
+    </div>
 
     <div v-else class="inf">
       <CartInfo
@@ -9,6 +12,7 @@
         :key="d.id"
         :id="d.id"
         :views="d.views"
+        :type="'got'"
       />
     </div>
   </div>
@@ -43,6 +47,29 @@ const { data, isError, isLoading, error } = useQuery({
 @media (max-width: 550px) {
   .inf {
     grid-template-columns: 1fr;
+  }
+}
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 15px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>
