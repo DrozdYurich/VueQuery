@@ -3,12 +3,12 @@
     <h1>{{ title }}</h1>
     <p>{{ views }}</p>
     <Button
-      severity="danger"
+      severity="success"
       :style="{
         height: '25px',
       }"
-      @click="remove"
-      >Удалить</Button
+      @click=""
+      >Оформить</Button
     >
   </div>
 </template>
@@ -49,7 +49,12 @@ const remove = () => {
   background-color: beige;
   border: 1px solid black;
   padding: 5px;
-  width: 30vw;
+  width: 40vw;
   border-radius: 10px;
+}
+@media (max-width: 370px) {
+  .card {
+    width: 80vw;
+  }
 }
 </style>

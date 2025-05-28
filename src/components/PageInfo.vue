@@ -1,108 +1,48 @@
 <template>
   <div class="card flex justify-center">
-    <Form
-      :initialValues
-      :resolver
-      @submit="onFormSubmit"
-      class="flex flex-col gap-4 w-full sm:w-80"
-    >
-      <FormField
-        v-slot="$field"
-        name="views"
-        initialValue=""
-        class="flex flex-col gap-1"
-      >
-        <InputNumber placeholder="views" v-model="initialValues.views" />
-        <Message
-          v-if="$field?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-          >{{ $field.error?.message }}</Message
-        >
-      </FormField>
-      <FormField
-        v-slot="$field"
-        name="title"
-        initialValue=""
-        class="flex flex-col gap-1"
-      >
-        <InputText
-          type="text"
-          v-model="initialValues.title"
-          placeholder="Last Name"
-        />
-        <Message
-          v-if="$field?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-          >{{ $field.error?.message }}</Message
-        >
-      </FormField>
+    <div v-if="isLoading">loading</div>
 
-      <Button type="submit" severity="secondary" label="Submit" />
-    </Form>
+    <div v-else class="inf">
+      <CartInfo
+        v-for="d in data"
+        :title="d.title"
+        :key="d.id"
+        :id="d.id"
+        :views="d.views"
+      />
+    </div>
   </div>
 </template>
-
 <script setup>
-import { computed, reactive } from "vue";
-import { v4 as uuidv4 } from "uuid";
-import { yupResolver } from "@primevue/forms/resolvers/yup";
-
-import * as yup from "yup";
-import { Form, FormField } from "@primevue/forms";
-import { Button, InputNumber, InputText, Message } from "primevue";
+import { useQuery } from "@tanstack/vue-query";
+import CartInfo from "./CartInfo.vue";
 import axios from "axios";
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-const qClient = useQueryClient();
-const addTasks = async (data) => {
+const getData = async () => {
   try {
-    const response = await axios.post("/api/posts", data);
-
+    const response = await axios.get("/api/posts");
     return response.data;
   } catch (error) {
     console.error(error);
   }
 };
-const defaultValues = {
-  id: "",
-  title: "",
-  views: "",
-};
-const { mutate: addMut } = useMutation({
-  mutationFn: addTasks,
-  onSuccess: (data) => {
-    console.log("Mutation success data:", data);
-    qClient.invalidateQueries(["posts"]);
-    Object.assign(initialValues, defaultValues);
-  },
-});
 
-const initialValues = reactive({
-  id: "",
-  title: "",
-  views: "",
+const { data, isError, isLoading, error } = useQuery({
+  queryKey: ["posts"],
+  queryFn: getData,
+  staleTime: 1000 * 60 * 5,
 });
-const schema = computed(() => {
-  const baseSchema = {
-    title: yup.string().required("Укажите название карточки"),
-    views: yup.number().required("Цена обязательна"),
-  };
-  return yup.object().shape(baseSchema);
-});
-
-const resolver = computed(() => yupResolver(schema.value));
-const onFormSubmit = ({ valid }) => {
-  if (valid) {
-    const falidData = {
-      title: initialValues.title,
-      id: uuidv4(),
-      views: initialValues.views,
-    };
-
-    addMut(falidData);
-  }
-};
 </script>
+<style scoped>
+.inf {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+}
+@media (max-width: 370px) {
+  .inf {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

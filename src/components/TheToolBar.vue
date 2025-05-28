@@ -41,16 +41,16 @@ function handleMenuClick(item) {
 }
 const items = ref([
   {
+    key: "zak",
+    label: "Заказать",
+    icon: "pi pi-shopping-cart",
+    command: gotoPage,
+  },
+  {
     key: "my",
     label: "Профиль",
     icon: "pi pi-user",
     command: gotoMy,
-  },
-  {
-    key: "zak",
-    label: "Заказы",
-    icon: "pi pi-shopping-cart",
-    command: gotoPage,
   },
 ]);
 </script>

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/HomePage.vue";
 import PagePage from "@/views/PagePage.vue";
+import Arenda from "@/components/Arenda.vue";
+import AppArendaLayout from "@/components/AppArendaLayout.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,8 +14,15 @@ const router = createRouter({
     },
     {
       path: "/page",
-      name: "page",
-      component: PagePage,
+      component: AppArendaLayout,
+      children: [
+        { path: "", name: "page", component: PagePage },
+        {
+          path: ":id",
+          name: "arenda",
+          component: Arenda,
+        },
+      ],
     },
   ],
 });
