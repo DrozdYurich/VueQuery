@@ -3,8 +3,8 @@
     <Form
       :initialValues
       :resolver
-      @submit="onFormSubmit"
       class="flex flex-col gap-4 w-3/4 sm:w-80"
+      @submit="onFormSubmit"
     >
       <FormField
         v-slot="$field"
@@ -32,7 +32,7 @@
         </label>
         <DatePicker
           id="data"
-          v-model="initialValues.title"
+          v-model="initialValues.data"
           showTime
           hourFormat="24"
           fluid
@@ -54,7 +54,7 @@
           class="w-full"
         />
         <Button
-          type="submit"
+          type="button"
           severity="danger"
           label="Отмена"
           class="w-full"
@@ -73,8 +73,9 @@ import { Form, FormField } from "@primevue/forms";
 import { Button, DatePicker, InputNumber, InputText, Message } from "primevue";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
+const route = useRoute();
 const goToPage = () => {
   router.push({ name: "page" });
 };
@@ -90,7 +91,7 @@ const qClient = useQueryClient();
 // };
 const defaultValues = {
   id: "",
-  title: "",
+  data: "",
   views: "",
 };
 // const { mutate: addMut } = useMutation({
@@ -104,12 +105,12 @@ const defaultValues = {
 
 const initialValues = reactive({
   id: "",
-  title: "",
+  data: "",
   views: "",
 });
 const schema = computed(() => {
   const baseSchema = {
-    title: yup.string().required("Укажите название карточки"),
+    data: yup.date().required("Укажите дату и время окончания поездки"),
     views: yup.number().required("Цена обязательна"),
   };
   return yup.object().shape(baseSchema);
@@ -117,14 +118,14 @@ const schema = computed(() => {
 
 const resolver = computed(() => yupResolver(schema.value));
 const onFormSubmit = ({ valid }) => {
+  console.log("fffs");
   if (valid) {
     const falidData = {
-      title: initialValues.title,
-      id: uuidv4(),
+      data: initialValues.data,
+      id: route.params.id,
       views: initialValues.views,
     };
-
-    addMut(falidData);
+    console.log(falidData, "fff");
   }
 };
 </script>
