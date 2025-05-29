@@ -27,6 +27,7 @@
         textAlign: 'center',
         marginTop: '1rem',
       }"
+      @click="handleRentClick"
     />
   </div>
 </template>
@@ -36,6 +37,8 @@ import CartInfo from "./CartInfo.vue";
 import axios from "axios";
 import AppCartPover from "./AppCartPover.vue";
 import { Button } from "primevue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const getData = async () => {
   try {
     const response = await axios.get("/api/posts");
@@ -50,6 +53,33 @@ const { data, isError, isLoading, error } = useQuery({
   queryFn: getData,
   staleTime: 1000 * 60 * 5,
 });
+// Функция для выбора случайного элемента из массива
+function getRandomItem(arr) {
+  if (!arr || arr.length === 0) return null;
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
+}
+
+function handleRentClick() {
+  if (!data || data.length === 0) {
+    alert("Данные еще не загружены");
+    return;
+  }
+
+  // Фильтруем элементы с isActive === false
+  const inactiveItems = data.value.filter((item) => !item.isActive);
+
+  if (inactiveItems.length === 0) {
+    alert("Нет доступных повербанков для аренды");
+    return;
+  }
+
+  // Выбираем случайный элемент
+  const randomItem = getRandomItem(inactiveItems);
+
+  // Переходим на маршрут с параметром id
+  router.push({ name: "arenda", params: { id: randomItem.id } });
+}
 </script>
 <style scoped>
 .inf {
