@@ -1,27 +1,73 @@
 <template>
-  <div class="fr flex items-center justify-center min-h-[50vh]">
+  <div class="fr flex items-center justify-center min-h-[50vh] bg-gray-50 p-6">
     <Form
       :initialValues="initialValues"
       :resolver="resolver"
-      class="flex flex-col gap-6 w-3/4 sm:w-96 bg-white p-8 rounded-xl shadow-md border border-gray-100"
+      class="flex flex-col gap-6 w-3/4 sm:w-96 bg-white p-8 rounded-xl shadow-md border border-gray-200"
       @submit="onFormSubmit"
     >
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+      <h2 class="text-2xl font-semibold text-blue-700 mb-4 text-center">
         Оформление аренды
       </h2>
 
+      <!-- Выбор времени аренды -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Время аренды</label>
+        <div class="flex gap-3">
+          <Button
+            type="button"
+            :style="{ borderColor: 'blue' }"
+            :class="{
+              'bg-blue-600 text-white': selectedOption === 'hour',
+              'bg-gray-200 text-gray-700': selectedOption !== 'hour',
+            }"
+            class="flex-1 py-2 rounded-md"
+            @click="selectOption('hour')"
+          >
+            1 час
+          </Button>
+          <Button
+            type="button"
+            :style="{ borderColor: 'blue' }"
+            :class="{
+              'bg-blue-600 text-white': selectedOption === 'day',
+              'bg-gray-200 text-gray-700': selectedOption !== 'day',
+            }"
+            class="flex-1 py-2 rounded-md"
+            @click="selectOption('day')"
+          >
+            1 день
+          </Button>
+          <Button
+            type="button"
+            :style="{ borderColor: 'blue' }"
+            :class="{
+              'bg-blue-600 text-white': selectedOption === 'custom',
+              'bg-gray-200 text-gray-700': selectedOption !== 'custom',
+            }"
+            class="flex-1 py-2 rounded-md"
+            @click="selectOption('custom')"
+          >
+            Другое
+          </Button>
+        </div>
+      </div>
+
+      <!-- Поле для ввода времени при выборе "Другое" -->
       <FormField
+        v-if="selectedOption === 'custom'"
         v-slot="$field"
-        name="views"
+        name="customHours"
         initialValue=""
         class="flex flex-col gap-2"
       >
         <label class="text-sm font-medium text-gray-700"
-          >Стоимость аренды</label
+          >Введите время аренды в часах</label
         >
         <InputNumber
-          placeholder="Введите цену"
-          v-model="initialValues.views"
+          v-model="customHours"
+          :min="1"
+          placeholder="Количество часов"
           class="border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md w-full"
         />
         <Message
@@ -30,48 +76,27 @@
           size="small"
           variant="simple"
           class="mt-1 text-sm text-red-600"
-          >{{ $field.error?.message }}</Message
         >
+          {{ $field.error?.message }}
+        </Message>
       </FormField>
 
-      <FormField
-        v-slot="$field"
-        name="title"
-        initialValue=""
-        class="flex flex-col gap-2"
-      >
-        <label for="data" class="text-sm font-medium text-gray-700">
-          Дата окончания аренды
-        </label>
-        <DatePicker
-          id="data"
-          v-model="initialValues.data"
-          showTime
-          hourFormat="24"
-          fluid
-          :minDate="new Date()"
-          class="border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md"
-        />
+      <!-- Отображение цены -->
+      <div class="text-center text-blue-700 font-semibold text-lg mt-4">
+        Цена: {{ formattedPrice }} ₽
+      </div>
 
-        <Message
-          v-if="$field?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-          class="mt-1 text-sm text-red-600"
-          >{{ $field.error?.message }}</Message
-        >
-      </FormField>
-
-      <div class="flex gap-4 justify-between mt-4">
+      <div class="flex gap-4 justify-between mt-6">
         <Button
           type="submit"
           label="Оплатить"
+          :style="{ borderColor: 'blue' }"
           class="bt w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
         />
         <Button
           type="button"
           label="Отмена"
+          :style="{ borderColor: 'blue' }"
           class="btn w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md transition-colors"
           @click="goToPage"
         />
@@ -81,173 +106,203 @@
 </template>
 
 <script setup>
-import { watch, computed, reactive } from "vue";
-import { v4 as uuidv4 } from "uuid";
+import { ref, computed, reactive, watch } from "vue";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 import * as yup from "yup";
 import { Form, FormField } from "@primevue/forms";
-import { Button, DatePicker, InputNumber, InputText, Message } from "primevue";
+import { Button, InputNumber, Message } from "primevue";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  if (isNaN(date)) return "Некорректная дата";
-
-  const pad = (num) => num.toString().padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-    date.getDate()
-  )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
-    date.getSeconds()
-  )}`;
-}
-const addPover = async (data) => {
-  try {
-    const response = await axios.post("/api/pover", data);
-
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
-const { mutate: addPov } = useMutation({
-  mutationFn: addPover,
-  onSuccess: () => {
-    // После успешного добавления:
-    // 1. Сбрасываем форму
-    Object.assign(initialValues, defaultValues);
-    // 2. Обновляем список заказов
-    qClient.invalidateQueries(["pover"]);
-    // 3. Перенаправляем на страницу заказов
-    router.push({ name: "orders" }); // Убедитесь что у вас есть такой маршрут
-  },
-  onError: (error) => {
-    console.error("Ошибка при добавлении заказа:", error);
-  },
-});
-const goToPage = () => {
-  router.push({ name: "page" });
-};
-
 const qClient = useQueryClient();
+
+const pricePerHour = 10; // цена за час
+const pricePerDay = 200; // цена за день (пример)
+
+// Выбранный вариант времени аренды
+const selectedOption = ref("hour");
+
+// Для кастомного времени (в часах)
+const customHours = ref(null);
+
 const initialValues = reactive({
   id: "",
   data: "",
   views: "",
+  customHours: null,
 });
 
+// Схема валидации
 const schema = computed(() => {
   const now = new Date();
   return yup.object().shape({
+    // views будет рассчитываться автоматически, поэтому можно не требовать обязательность
     data: yup
       .date()
-      .required("Укажите дату и время окончания поездки")
-      .min(now, "Дата не может быть раньше текущего времени"),
-    views: yup.number().required("Цена обязательна"),
+      .required("Укажите дату и время окончания аренды")
+      .min(now, "Дата не может быть в прошлом"),
+    customHours:
+      selectedOption.value === "custom"
+        ? yup.number().required("Введите время аренды").min(1, "Минимум 1 час")
+        : yup.number().notRequired(),
   });
 });
 
 const resolver = computed(() => yupResolver(schema.value));
 
-const onFormSubmit = ({ valid }) => {
-  if (valid) {
-    const falidData = {
-      data: formatDate(initialValues.data),
-      id: route.params.id,
-      views: initialValues.views,
-    };
-    console.log(falidData, "Submitted data");
-    addPov(falidData);
+// Форматирование даты в строку
+function formatDate(date) {
+  if (!date) return "";
+  const d = new Date(date);
+  const pad = (n) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+// Мутация для отправки данных
+const addPover = async (data) => {
+  try {
+    const response = await axios.post("/api/pover", data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
   }
 };
 
-// Стоимость в час
-const pricePerHour = 10;
-// Реактивное значение времени начала аренды (можно получать из API или роута)
-const rentalStart = new Date(); // текущее время как начало аренды
-// Вычисляемая дата окончания аренды на основе views (цены)
+const { mutate: addPov } = useMutation({
+  mutationFn: addPover,
+  onSuccess: () => {
+    Object.assign(initialValues, defaultValues);
+    qClient.invalidateQueries(["pover"]);
+    router.push({ name: "orders" });
+  },
+  onError: (error) => {
+    console.error("Ошибка при добавлении заказа:", error);
+  },
+});
+
+const defaultValues = {
+  id: "",
+  data: "",
+  views: "",
+  customHours: null,
+};
+
+const goToPage = () => {
+  router.push({ name: "page" });
+};
+
+// Рассчитываем views (стоимость) в зависимости от выбранного варианта
+const calculatedViews = computed(() => {
+  if (selectedOption.value === "hour") {
+    return pricePerHour;
+  }
+  if (selectedOption.value === "day") {
+    return pricePerDay;
+  }
+  if (selectedOption.value === "custom" && customHours.value) {
+    return customHours.value * pricePerHour;
+  }
+  return 0;
+});
+
+// Рассчитываем дату окончания аренды на основе выбранного времени
+const rentalStart = new Date();
+
 const calculatedEndDate = computed(() => {
-  if (!initialValues.views || isNaN(initialValues.views)) return "";
-  const hours = initialValues.views / pricePerHour;
   const endDate = new Date(rentalStart);
-  endDate.setHours(endDate.getHours() + hours);
+  if (selectedOption.value === "hour") {
+    endDate.setHours(endDate.getHours() + 1);
+  } else if (selectedOption.value === "day") {
+    endDate.setDate(endDate.getDate() + 1);
+  } else if (selectedOption.value === "custom" && customHours.value) {
+    endDate.setHours(endDate.getHours() + customHours.value);
+  }
   return endDate;
 });
 
-// Вычисляемая цена на основе даты окончания
-const calculatedPrice = computed(() => {
-  if (!initialValues.data) return "";
-  const diffMs = new Date(initialValues.data) - rentalStart;
-  const hours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
-  return hours * pricePerHour;
+// Форматируем цену для отображения
+const formattedPrice = computed(() => {
+  return calculatedViews.value > 0
+    ? calculatedViews.value.toLocaleString()
+    : "0";
 });
 
-watch(
-  () => initialValues.views,
-  (newPrice) => {
-    if (newPrice && !isNaN(newPrice)) {
-      const hours = newPrice / pricePerHour;
-      const endDate = new Date(rentalStart);
-      endDate.setHours(endDate.getHours() + hours);
-      initialValues.data = endDate;
+// Следим за изменением selectedOption и обновляем initialValues
+watch(selectedOption, (newVal) => {
+  if (newVal === "hour") {
+    initialValues.views = pricePerHour;
+    initialValues.data = calculatedEndDate.value;
+    customHours.value = null;
+  } else if (newVal === "day") {
+    initialValues.views = pricePerDay;
+    initialValues.data = calculatedEndDate.value;
+    customHours.value = null;
+  } else if (newVal === "custom") {
+    initialValues.views = 0;
+    initialValues.data = null;
+  }
+});
+
+// Следим за изменением customHours и обновляем views и дату окончания
+watch(customHours, (newVal) => {
+  if (selectedOption.value === "custom") {
+    if (newVal && newVal > 0) {
+      initialValues.views = newVal * pricePerHour;
+      initialValues.data = calculatedEndDate.value;
+    } else {
+      initialValues.views = 0;
+      initialValues.data = null;
     }
   }
-);
-watch(
-  () => initialValues.data,
-  (newDate) => {
-    if (newDate && !isNaN(new Date(newDate))) {
-      const diffMs = new Date(newDate) - rentalStart;
-      const hours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
-      initialValues.views = hours * pricePerHour;
-    }
+});
+// Обработка сабмита формы
+const onFormSubmit = ({ valid }) => {
+  if (valid) {
+    const falidData = {
+      id: route.params.id,
+      rentalStart: formatDate(rentalStart.value), // время начала аренды
+      price: initialValues.views,
+      isActive: true,
+      // Можно добавить data (время окончания аренды), если нужно
+      endDate: formatDate(initialValues.data),
+    };
+    console.log("Submitted data:", falidData);
   }
-);
+};
+
+// Функция выбора варианта времени аренды
+function selectOption(option) {
+  selectedOption.value = option;
+}
 </script>
 
 <style scoped>
-button {
-  transition: all 0.2s ease;
-}
+/* Кастомные стили для кнопок */
 .p-button {
-  width: 100%;
-  background-color: #2563eb;
-  color: white;
   font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
   transition: background-color 0.2s ease-in-out;
-}
-.p-button.bt:hover {
-  background-color: #0d1d47;
-}
-.p-button.btn {
-  background-color: #f32c09;
-  border: none;
-  transition: background-color 0.2s ease-in-out;
-}
-.p-button.btn:hover {
-  background-color: #8f2512;
-}
-:deep(.p-inputnumber-input),
-:deep(.p-datepicker) {
-  transition: all 0.2s ease;
-  border: 1px solid #d1d5db;
 }
 
-:deep(.p-inputnumber-input:focus),
-:deep(.p-datepicker:focus) {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  outline: none;
+.p-button.bg-blue-600 {
+  background-color: #2563eb;
+  color: white;
 }
-:deep(.p-inputtext),
-:deep(.p-inputnumber-input),
-:deep(.p-datepicker) {
-  width: 100%;
+
+.p-button.bg-blue-600:hover {
+  background-color: #1e40af;
+}
+
+.p-button.bg-gray-200 {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.p-button.bg-gray-200:hover {
+  background-color: #d1d5db;
 }
 </style>

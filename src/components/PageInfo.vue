@@ -65,15 +65,12 @@ function handleRentClick() {
     alert("Данные еще не загружены");
     return;
   }
-
   // Фильтруем элементы с isActive === false
   const inactiveItems = data.value.filter((item) => !item.isActive);
-
   if (inactiveItems.length === 0) {
     alert("Нет доступных повербанков для аренды");
     return;
   }
-
   // Выбираем случайный элемент
   const randomItem = getRandomItem(inactiveItems);
 
