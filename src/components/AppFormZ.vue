@@ -122,24 +122,22 @@ const qClient = useQueryClient();
 const pricePerHour = 10; // цена за час
 const pricePerDay = 200; // цена за день (пример)
 
-// Выбранный вариант времени аренды
 const selectedOption = ref("hour");
-
-// Для кастомного времени (в часах)
 const customHours = ref(null);
+const rentalStart = ref(new Date()); // Время начала аренды
 
 const initialValues = reactive({
   id: "",
-  data: "",
-  views: "",
-  customHours: null,
+  data: "", // время окончания аренды
+  views: "", // цена
+  rentalStart: rentalStart.value, // время начала аренды
+  isActive: false,
 });
 
 // Схема валидации
 const schema = computed(() => {
   const now = new Date();
   return yup.object().shape({
-    // views будет рассчитываться автоматически, поэтому можно не требовать обязательность
     data: yup
       .date()
       .required("Укажите дату и время окончания аренды")
@@ -152,49 +150,6 @@ const schema = computed(() => {
 });
 
 const resolver = computed(() => yupResolver(schema.value));
-
-// Форматирование даты в строку
-function formatDate(date) {
-  if (!date) return "";
-  const d = new Date(date);
-  const pad = (n) => n.toString().padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
-// Мутация для отправки данных
-const addPover = async (data) => {
-  try {
-    const response = await axios.post("/api/pover", data);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const { mutate: addPov } = useMutation({
-  mutationFn: addPover,
-  onSuccess: () => {
-    Object.assign(initialValues, defaultValues);
-    qClient.invalidateQueries(["pover"]);
-    router.push({ name: "orders" });
-  },
-  onError: (error) => {
-    console.error("Ошибка при добавлении заказа:", error);
-  },
-});
-
-const defaultValues = {
-  id: "",
-  data: "",
-  views: "",
-  customHours: null,
-};
-
-const goToPage = () => {
-  router.push({ name: "page" });
-};
 
 // Рассчитываем views (стоимость) в зависимости от выбранного варианта
 const calculatedViews = computed(() => {
@@ -211,17 +166,17 @@ const calculatedViews = computed(() => {
 });
 
 // Рассчитываем дату окончания аренды на основе выбранного времени
-const rentalStart = new Date();
-
 const calculatedEndDate = computed(() => {
-  const endDate = new Date(rentalStart);
+  const endDate = new Date(rentalStart.value);
+
   if (selectedOption.value === "hour") {
     endDate.setHours(endDate.getHours() + 1);
   } else if (selectedOption.value === "day") {
     endDate.setDate(endDate.getDate() + 1);
   } else if (selectedOption.value === "custom" && customHours.value) {
-    endDate.setHours(endDate.getHours() + customHours.value);
+    endDate.setHours(endDate.getHours() + Number(customHours.value));
   }
+
   return endDate;
 });
 
@@ -232,53 +187,52 @@ const formattedPrice = computed(() => {
     : "0";
 });
 
-// Следим за изменением selectedOption и обновляем initialValues
-watch(selectedOption, (newVal) => {
-  if (newVal === "hour") {
-    initialValues.views = pricePerHour;
+// Следим за изменениями и обновляем initialValues
+watch(
+  [selectedOption, customHours],
+  () => {
+    initialValues.views = calculatedViews.value;
     initialValues.data = calculatedEndDate.value;
-    customHours.value = null;
-  } else if (newVal === "day") {
-    initialValues.views = pricePerDay;
-    initialValues.data = calculatedEndDate.value;
-    customHours.value = null;
-  } else if (newVal === "custom") {
-    initialValues.views = 0;
-    initialValues.data = null;
-  }
-});
+  },
+  { immediate: true }
+);
 
-// Следим за изменением customHours и обновляем views и дату окончания
-watch(customHours, (newVal) => {
-  if (selectedOption.value === "custom") {
-    if (newVal && newVal > 0) {
-      initialValues.views = newVal * pricePerHour;
-      initialValues.data = calculatedEndDate.value;
-    } else {
-      initialValues.views = 0;
-      initialValues.data = null;
-    }
+// Функция выбора варианта времени аренды
+function selectOption(option) {
+  selectedOption.value = option;
+  if (option !== "custom") {
+    customHours.value = null;
   }
-});
+}
+
+// Форматирование даты в строку
+function formatDate(date) {
+  if (!date) return "";
+  const d = new Date(date);
+  const pad = (n) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
 // Обработка сабмита формы
 const onFormSubmit = ({ valid }) => {
   if (valid) {
     const falidData = {
       id: route.params.id,
-      rentalStart: formatDate(rentalStart.value), // время начала аренды
+      rentalStart: formatDate(initialValues.rentalStart),
       price: initialValues.views,
       isActive: true,
-      // Можно добавить data (время окончания аренды), если нужно
       endDate: formatDate(initialValues.data),
     };
     console.log("Submitted data:", falidData);
+    // Здесь можно добавить вызов мутации для сохранения данных
   }
 };
 
-// Функция выбора варианта времени аренды
-function selectOption(option) {
-  selectedOption.value = option;
-}
+const goToPage = () => {
+  router.push({ name: "page" });
+};
 </script>
 
 <style scoped>
