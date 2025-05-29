@@ -1,61 +1,35 @@
 <template>
-  <div class="card bg-white">
-    <h1 class="text-2xl font-medium text-gray-800">{{ title }}</h1>
-    <p class="text-gray-500">{{ views }} просмотров</p>
-    <Button
-      severity="success"
-      :style="{
-        height: '32px',
-        backgroundColor: type === 'got' ? '#3b82f6' : '#ef4444',
-        borderColor: type === 'got' ? '#3b82f6' : '#ef4444',
-        color: 'white',
-        fontWeight: '500',
-        borderRadius: '6px',
-      }"
-      @click="goToArenda"
-      >{{ type === "got" ? "Оформить" : "Снять бронь" }}</Button
+  <tr class="bg-white mb-0 py-0 even:bg-gray-100">
+    <!-- Номер -->
+    <td
+      class="px-7 py-2 text-blue-700 font-semibold border border-blue-200 text-center"
     >
-  </div>
+      {{ number }}
+    </td>
+
+    <!-- Время, которое осталось -->
+    <td class="px-7 py-2 text-blue-600 border border-blue-200 text-center">
+      {{ remainingTime }}
+    </td>
+
+    <!-- Цена -->
+    <td class="px-7 py-2 text-gray-700 border border-blue-200 text-center">
+      <Tag severity="info" :value="price + '₽'" />
+    </td>
+  </tr>
 </template>
 
 <script setup>
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios from "axios";
-import { Button } from "primevue";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { Tag } from "primevue";
+
 const props = defineProps({
-  title: String,
-  views: Number,
-  id: String,
-  type: String,
+  number: [String, Number],
+  remainingTime: String,
+  price: [String, Number],
 });
-const goToArenda = () => {
-  if (props.type === "got") {
-    router.push({ name: "arenda", params: { id: props.id } });
-  } else {
-    router.push({ name: "page" });
-  }
-};
 </script>
 
 <style scoped>
-.card {
-  gap: 12px;
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  padding: 16px;
-  width: 40vw;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
 @media (max-width: 550px) {
   .card {
     width: 80vw;

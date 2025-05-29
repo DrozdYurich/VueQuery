@@ -14,11 +14,11 @@
 
     <div v-else-if="data && data.length > 0" class="orders-grid">
       <CartInfo
-        v-for="n in data"
+        v-for="n in data.filter((item) => item.isActive)"
         :key="n.id"
-        :title="n.title"
-        :views="n.views"
-        :type="'go'"
+        :number="n.id"
+        :remainingTime="n.title"
+        :price="n.views"
       />
     </div>
 
@@ -55,9 +55,9 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const getPover = async () => {
+const getPosts = async () => {
   try {
-    const resp = await axios.get("/api/pover");
+    const resp = await axios.get("/api/posts");
     return resp.data;
   } catch (error) {
     throw new Error("Не удалось загрузить заказы");
@@ -65,14 +65,17 @@ const getPover = async () => {
 };
 
 const { data, isLoading, error, refetch } = useQuery({
-  queryKey: ["pover"],
-  queryFn: getPover,
+  queryKey: ["posts"],
+  queryFn: getPosts,
   staleTime: 1000 * 60 * 5,
 });
 </script>
 
 <style scoped>
 .orders-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -113,7 +116,8 @@ const { data, isLoading, error, refetch } = useQuery({
 .orders-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+
+  margin: auto;
 }
 
 .empty-state {

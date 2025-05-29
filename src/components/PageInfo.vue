@@ -1,26 +1,41 @@
 <template>
-  <div class="card flex justify-center">
+  <div class="card flex flex-col justify-center items-center">
     <div v-if="isLoading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Загружаем повербанки...</p>
     </div>
 
     <div v-else class="inf">
-      <CartInfo
-        v-for="d in data"
-        :title="d.title"
-        :key="d.id"
-        :id="d.id"
-        :views="d.views"
-        :type="'got'"
+      <AppCartPover
+        v-for="n in data"
+        :key="n.id"
+        :id="n.id"
+        :active="n.isActive"
       />
     </div>
+    <Button
+      severity="secondary"
+      label="Взять в аренду"
+      :style="{
+        backgroundColor: '#cccccc', // светло-серый фон
+        color: '#666666', // темно-серый текст
+        border: '1px solid #999999', // серый бордер
+        padding: '8px 16px',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        width: '60%',
+        textAlign: 'center',
+        marginTop: '1rem',
+      }"
+    />
   </div>
 </template>
 <script setup>
 import { useQuery } from "@tanstack/vue-query";
 import CartInfo from "./CartInfo.vue";
 import axios from "axios";
+import AppCartPover from "./AppCartPover.vue";
+import { Button } from "primevue";
 const getData = async () => {
   try {
     const response = await axios.get("/api/posts");
@@ -39,14 +54,14 @@ const { data, isError, isLoading, error } = useQuery({
 <style scoped>
 .inf {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   justify-items: center;
   align-items: center;
 }
 @media (max-width: 550px) {
   .inf {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 .loading-state {
