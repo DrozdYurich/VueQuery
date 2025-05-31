@@ -83,8 +83,8 @@ onUnmounted(() => {
 <style scoped>
 .tr {
   display: grid;
-  grid-template-columns: 0.5fr 1fr 0.5fr 0.3fr;
-  width: 70vw;
+  grid-template-columns: 0.5fr 1fr 0.5fr 0.5fr;
+  width: 90vw;
   text-align: center;
   border: 1px solid #2275db; /* светлая общая граница */
   border-bottom: none;
