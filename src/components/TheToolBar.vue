@@ -44,14 +44,14 @@ function handleMenuClick(item) {
 const items = ref([
   {
     key: "zak",
-    label: "Заказать",
+    label: "Повербанки",
     icon: "pi pi-shopping-cart",
     command: gotoPage,
     routeName: "page",
   },
   {
     key: "my",
-    label: "Профиль",
+    label: "Мои заказы",
     icon: "pi pi-user",
     command: gotoMy,
     routeName: "home",

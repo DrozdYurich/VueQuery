@@ -116,18 +116,18 @@ const router = useRouter();
 const route = useRoute();
 const qClient = useQueryClient();
 const id = route.params.id;
-const pricePerHour = 10; // цена за час
-const pricePerDay = 200; // цена за день (пример)
+const pricePerHour = 100;
+const pricePerDay = 2000;
 
 const selectedOption = ref("hour");
 const customHours = ref(null);
-const rentalStart = ref(new Date()); // Время начала аренды
+const rentalStart = ref(new Date());
 
 const initialValues = reactive({
   id: "",
-  data: "", // время окончания аренды
-  views: "", // цена
-  rentalStart: rentalStart.value, // время начала аренды
+  data: "",
+  views: "",
+  rentalStart: rentalStart.value,
   isActive: false,
 });
 
