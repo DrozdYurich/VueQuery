@@ -245,16 +245,6 @@ const goToPage = () => {
 <style>
 .p-button {
   font-size: 0.7rem;
-  background: #efeff0 !important;
-  color: rgb(7, 7, 7) !important;
-}
-.p-inputtext {
-  width: 90%;
-}
-p-button:not(:disabled):hover {
-  background: #1e40af;
-  border: 1px solid #1e40af;
-  color: white !important;
 }
 .loading-state {
   display: flex;
