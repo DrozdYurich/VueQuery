@@ -84,7 +84,7 @@ onUnmounted(() => {
 .tr {
   display: grid;
   grid-template-columns: 0.5fr 1fr 0.5fr 0.5fr;
-  width: 90vw;
+  width: 80vw;
   text-align: center;
   border: 1px solid #2275db; /* светлая общая граница */
   border-bottom: none;
