@@ -3,9 +3,7 @@
     <div
       class="card-form p-6 rounded-lg shadow-md bg-white border border-gray-200 max-w-md mx-auto"
     >
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">
-        Оплата через Сбербанк
-      </h2>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Оплата</h2>
 
       <Form
         :initialValues="initialValues"

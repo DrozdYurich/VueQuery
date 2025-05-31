@@ -9,15 +9,45 @@
       <Button severity="danger" label="Сдать" @click="changeDel" />
     </div>
   </div>
+  <div class="card flex justify-center">
+    <Dialog
+      v-model:visible="visible"
+      modal
+      header="Вы уверены?"
+      :style="{ width: '15rem' }"
+    >
+      <span class="text-surface-500 dark:text-surface-400 block mb-8">
+        Отмена действия приведет к завершению аренды. Восстановить её будет
+        невозможно.</span
+      >
+
+      <div class="flex justify-end gap-2">
+        <Button
+          type="button"
+          label="Отменить аренду"
+          severity="danger"
+          @click="otmena"
+        ></Button>
+        <Button
+          type="button"
+          label="Не отменять"
+          severity="success"
+          @click="nootmena"
+        ></Button>
+      </div>
+    </Dialog>
+  </div>
 </template>
 
 <script setup>
 import { updatePost } from "@/initialState";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import { Button, Tag } from "primevue";
+import { Button, Dialog, InputText, Tag } from "primevue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+
+const visible = ref(false);
 const now = ref(new Date());
 const router = useRouter();
 const props = defineProps({
@@ -27,6 +57,13 @@ const props = defineProps({
   price: [String, Number],
   activ: Boolean,
 });
+const nootmena = async () => {
+  visible.value = false;
+};
+const otmena = async () => {
+  await updatePosts();
+  visible.value = false;
+};
 const timeLeft = computed(() => {
   const diffMs = new Date(props.endData) - now.value;
   if (diffMs <= 0) {
@@ -65,7 +102,7 @@ const { mutateAsync: updatePosts, isPending } = useMutation({
   },
 });
 const changeDel = async () => {
-  await updatePosts();
+  visible.value = true;
 };
 let timer;
 
@@ -86,22 +123,19 @@ onUnmounted(() => {
   grid-template-columns: 0.5fr 0.8fr 0.5fr 0.5fr;
   width: 90vw;
   text-align: center;
-  border: 1px solid #2275db; /* светлая общая граница */
-  border-bottom: none;
+  border: 1px solid #2275db;
+
   overflow: hidden;
 }
 
 .td {
   padding: 8px 12px;
-  border-right: 1px solid #cbd5e1; /* светлая граница справа */
+  border-right: 1px solid #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.tr:last-child {
-  border-bottom: 1px solid #2275db;
-}
-/* Убираем границу у последнего столбца */
+
 .td:last-child {
   border-right: none;
 }
