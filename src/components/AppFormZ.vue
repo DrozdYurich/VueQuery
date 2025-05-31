@@ -1,5 +1,5 @@
 <template>
-  <div class="fr flex items-center justify-center min-h-[50vh] bg-gray-50 p-6">
+  <div class="fr flex items-center justify-center min-h-[50vh] bg-gray-50 p-0">
     <Form
       :initialValues="initialValues"
       :resolver="resolver"
@@ -15,7 +15,7 @@
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-sm font-medium text-gray-700">Время аренды</label>
-        <div class="flex gap-3">
+        <div class="tr flex gap-3">
           <Button
             type="button"
             :style="{ borderColor: 'blue' }"
@@ -87,7 +87,7 @@
         <Button
           type="submit"
           label="Оплатить"
-          :style="{ borderColor: 'blue' }"
+          :style="{ borderColor: 'blue', fontSize: '0.6rem' }"
           class="bt w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
         />
         <Button
@@ -242,7 +242,10 @@ const goToPage = () => {
 };
 </script>
 
-<style scoped>
+<style>
+.p-button {
+  font-size: 0.7rem;
+}
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -270,7 +273,12 @@ const goToPage = () => {
   font-weight: 500;
   transition: background-color 0.2s ease-in-out;
 }
-
+@media (max-width: 365px) {
+  .tr {
+    display: flex;
+    flex-direction: column;
+  }
+}
 .p-button.bg-blue-600 {
   background-color: #2563eb;
   color: white;
@@ -287,5 +295,8 @@ const goToPage = () => {
 
 .p-button.bg-gray-200:hover {
   background-color: #d1d5db;
+}
+.p-button-label {
+  font-size: 0.8rem;
 }
 </style>
