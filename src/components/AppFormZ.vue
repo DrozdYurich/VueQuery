@@ -13,7 +13,7 @@
         <div class="loading-spinner"></div>
         <p>Подождите...</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div v-else class="flex flex-col gap-2">
         <label class="text-sm font-medium text-gray-700">Время аренды</label>
         <div class="tr flex gap-3">
           <Button
