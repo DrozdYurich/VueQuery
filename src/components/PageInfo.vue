@@ -32,6 +32,7 @@
   </div>
 </template>
 <script setup>
+import { getPosts } from "@/initialState";
 import { useQuery } from "@tanstack/vue-query";
 import CartInfo from "./CartInfo.vue";
 import axios from "axios";
@@ -41,7 +42,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const getData = async () => {
   try {
-    const response = await axios.get("api/posts");
+    const response = getPosts;
     return response.data;
   } catch (error) {
     console.error(error);
