@@ -224,10 +224,12 @@ const { mutateAsync: updatePosts, isPending } = useMutation({
   onSuccess: () => {
     qClient.invalidateQueries(["posts"]);
     router.push({
-      name: "home",
+      name: "many",
+      query: { data: encodeURIComponent(JSON.stringify(data.value)) },
     });
   },
 });
+const data = ref(null);
 // Обработка сабмита формы
 const onFormSubmit = async ({ valid }) => {
   if (valid) {
@@ -238,7 +240,11 @@ const onFormSubmit = async ({ valid }) => {
       isActive: true,
       endDate: formatDate(initialValues.data),
     };
-    await updatePosts(falidData);
+    data.value = falidData;
+    router.push({
+      name: "many",
+      query: { data: encodeURIComponent(JSON.stringify(data.value)) },
+    });
     console.log("Submitted data:", falidData);
   }
 };

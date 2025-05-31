@@ -4,6 +4,7 @@ import PagePage from "@/views/PagePage.vue";
 import Arenda from "@/components/Arenda.vue";
 import AppArendaLayout from "@/components/AppArendaLayout.vue";
 import AppAuth from "@/components/AppAuth.vue";
+import AppMany from "@/components/AppMany.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,13 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomePage,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/many",
+      name: "many",
+
+      component: AppMany,
       meta: { requiresAuth: true },
     },
     {

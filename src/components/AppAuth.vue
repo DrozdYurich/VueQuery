@@ -97,7 +97,7 @@ import { Form } from "@primevue/forms";
 const toast = useToast();
 const showToast = (options) => {
   toast.add({
-    life: 2000,
+    life: 1000,
     ...options,
   });
 };
