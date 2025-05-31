@@ -17,9 +17,9 @@
       severity="secondary"
       label="Взять в аренду"
       :style="{
-        backgroundColor: '#cccccc', // светло-серый фон
-        color: '#666666', // темно-серый текст
-        border: '1px solid #999999', // серый бордер
+        backgroundColor: '#cccccc',
+        color: '#666666',
+        border: '1px solid #999999',
         padding: '8px 16px',
         borderRadius: '4px',
         cursor: 'pointer',
@@ -53,28 +53,22 @@ const { data, isError, isLoading, error } = useQuery({
   queryFn: getData,
   staleTime: 1000 * 60 * 5,
 });
-// Функция для выбора случайного элемента из массива
 function getRandomItem(arr) {
   if (!arr || arr.length === 0) return null;
   const randomIndex = Math.floor(Math.random() * arr.length);
   return arr[randomIndex];
 }
-
 function handleRentClick() {
   if (!data || data.length === 0) {
     alert("Данные еще не загружены");
     return;
   }
-  // Фильтруем элементы с isActive === false
   const inactiveItems = data.value.filter((item) => !item.isActive);
   if (inactiveItems.length === 0) {
     alert("Нет доступных повербанков для аренды");
     return;
   }
-  // Выбираем случайный элемент
   const randomItem = getRandomItem(inactiveItems);
-
-  // Переходим на маршрут с параметром id
   router.push({ name: "arenda", params: { id: randomItem.id } });
 }
 </script>

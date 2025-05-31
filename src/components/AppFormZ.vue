@@ -9,8 +9,6 @@
       <h2 class="text-2xl font-semibold text-blue-700 mb-4 text-center">
         Оформление аренды
       </h2>
-
-      <!-- Выбор времени аренды -->
       <div class="flex flex-col gap-2">
         <label class="text-sm font-medium text-gray-700">Время аренды</label>
         <div class="flex gap-3">
@@ -52,8 +50,6 @@
           </Button>
         </div>
       </div>
-
-      <!-- Поле для ввода времени при выборе "Другое" -->
       <FormField
         v-if="selectedOption === 'custom'"
         v-slot="$field"
@@ -80,12 +76,9 @@
           {{ $field.error?.message }}
         </Message>
       </FormField>
-
-      <!-- Отображение цены -->
       <div class="text-center text-blue-700 font-semibold text-lg mt-4">
         Цена: {{ formattedPrice }} ₽
       </div>
-
       <div class="flex gap-4 justify-between mt-6">
         <Button
           type="submit"
@@ -118,7 +111,7 @@ import { useMutation, useQueryClient } from "@tanstack/vue-query";
 const router = useRouter();
 const route = useRoute();
 const qClient = useQueryClient();
-
+const id = route.params.id;
 const pricePerHour = 10; // цена за час
 const pricePerDay = 200; // цена за день (пример)
 
@@ -134,7 +127,6 @@ const initialValues = reactive({
   isActive: false,
 });
 
-// Схема валидации
 const schema = computed(() => {
   const now = new Date();
   return yup.object().shape({
@@ -151,7 +143,6 @@ const schema = computed(() => {
 
 const resolver = computed(() => yupResolver(schema.value));
 
-// Рассчитываем views (стоимость) в зависимости от выбранного варианта
 const calculatedViews = computed(() => {
   if (selectedOption.value === "hour") {
     return pricePerHour;
@@ -165,7 +156,6 @@ const calculatedViews = computed(() => {
   return 0;
 });
 
-// Рассчитываем дату окончания аренды на основе выбранного времени
 const calculatedEndDate = computed(() => {
   const endDate = new Date(rentalStart.value);
 
@@ -180,14 +170,11 @@ const calculatedEndDate = computed(() => {
   return endDate;
 });
 
-// Форматируем цену для отображения
 const formattedPrice = computed(() => {
   return calculatedViews.value > 0
     ? calculatedViews.value.toLocaleString()
     : "0";
 });
-
-// Следим за изменениями и обновляем initialValues
 watch(
   [selectedOption, customHours],
   () => {
@@ -214,7 +201,20 @@ function formatDate(date) {
     d.getHours()
   )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
-
+const changeData = async (data) => {
+  try {
+    const resp = await axios.put(`/api/posts/${id}`, data);
+    return resp.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const { mutate: updatePost } = useMutation({
+  mutationFn: changeData,
+  onSuccess: () => {
+    qClient.invalidateQueries(["posts"]);
+  },
+});
 // Обработка сабмита формы
 const onFormSubmit = ({ valid }) => {
   if (valid) {
@@ -225,6 +225,7 @@ const onFormSubmit = ({ valid }) => {
       isActive: true,
       endDate: formatDate(initialValues.data),
     };
+    updatePost(falidData);
     console.log("Submitted data:", falidData);
     // Здесь можно добавить вызов мутации для сохранения данных
   }

@@ -92,6 +92,25 @@ const createPostHandler = http.post("/api/posts", async ({ request }) => {
   posts.push(postWithId);
   return HttpResponse.json(postWithId, { status: 201 });
 });
+const updatePostHandler = http.put(
+  "/api/posts/:id",
+  async ({ request, params }) => {
+    await delay(1200);
+    const updatedData = await request.json();
+    const postIndex = posts.findIndex((post) => post.id === params.id);
+
+    if (postIndex === -1) {
+      return HttpResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+    posts[postIndex] = {
+      ...posts[postIndex],
+      ...updatedData,
+    };
+
+    return HttpResponse.json(posts[postIndex], { status: 200 });
+  }
+);
+
 const deletePostHandler = http.delete("/api/posts/:id", async ({ params }) => {
   await delay(1200);
   const postId = params.id;
@@ -100,4 +119,9 @@ const deletePostHandler = http.delete("/api/posts/:id", async ({ params }) => {
   return new HttpResponse(null, { status: 204 });
 });
 
-export const handlers = [postsHandler, createPostHandler, deletePostHandler];
+export const handlers = [
+  postsHandler,
+  createPostHandler,
+  deletePostHandler,
+  updatePostHandler,
+];
