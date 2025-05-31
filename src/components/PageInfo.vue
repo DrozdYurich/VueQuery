@@ -41,7 +41,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const getData = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/posts");
+    const response = await axios.get("api/posts");
     return response.data;
   } catch (error) {
     console.error(error);
