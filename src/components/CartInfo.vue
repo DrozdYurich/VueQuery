@@ -21,7 +21,7 @@ const props = defineProps({
   price: [String, Number],
 });
 const timeLeft = computed(() => {
-  const diffMs = new Date(props.endData) - now.value; // разница в миллисекундах
+  const diffMs = new Date(props.endData) - now.value;
   if (diffMs <= 0) {
     return "Аренда завершена";
   }
