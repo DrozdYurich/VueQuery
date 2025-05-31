@@ -53,8 +53,8 @@ onUnmounted(() => {
   grid-template-columns: 0.5fr 1fr 0.5fr;
   width: 70vw;
   text-align: center;
-  border: 1px solid #cbd5e1; /* светлая общая граница */
-  border-radius: 6px;
+  border: 1px solid #2275db; /* светлая общая граница */
+  border-bottom: none;
   overflow: hidden;
 }
 
@@ -65,7 +65,9 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
 }
-
+.tr:last-child {
+  border-bottom: 1px solid #2275db;
+}
 /* Убираем границу у последнего столбца */
 .td:last-child {
   border-right: none;
