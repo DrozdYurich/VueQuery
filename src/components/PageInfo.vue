@@ -42,7 +42,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const getData = async () => {
   try {
-    const response = getPosts;
+    const response = await getPosts();
     return response.data;
   } catch (error) {
     console.error(error);
