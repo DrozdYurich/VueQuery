@@ -1,10 +1,10 @@
 <template>
   <div class="card flex flex-col justify-center items-center">
+    {{ data }}
     <div v-if="isLoading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Загружаем повербанки...</p>
     </div>
-
     <div v-else class="inf">
       <AppCartPover
         v-for="n in data"

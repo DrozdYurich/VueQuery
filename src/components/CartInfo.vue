@@ -5,20 +5,27 @@
     <div class="td">
       <Tag severity="info" :value="price + '₽'" class="w-full" />
     </div>
+    <div class="td">
+      <Button severity="danger" label="Сдать" @click="changeDel" />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { Tag } from "primevue";
+import { updatePost } from "@/initialState";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
+import { Button, Tag } from "primevue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 const now = ref(new Date());
-
+const router = useRouter();
 const props = defineProps({
   number: [String, Number],
   startData: String,
   endData: String,
   price: [String, Number],
+  activ: Boolean,
 });
 const timeLeft = computed(() => {
   const diffMs = new Date(props.endData) - now.value;
@@ -33,7 +40,33 @@ const timeLeft = computed(() => {
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 });
-
+const qClient = useQueryClient();
+const changeData = async () => {
+  try {
+    const resp = await updatePost(props.number, {
+      id: props.number,
+      price: props.price,
+      isActive: false,
+      endDate: props.endData,
+      rentalStart: props.startData,
+    });
+    return resp;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const { mutateAsync: updatePosts, isPending } = useMutation({
+  mutationFn: changeData,
+  onSuccess: () => {
+    qClient.invalidateQueries(["posts"]);
+    router.push({
+      name: "page",
+    });
+  },
+});
+const changeDel = async () => {
+  await updatePosts();
+};
 let timer;
 
 onMounted(() => {
@@ -50,7 +83,7 @@ onUnmounted(() => {
 <style scoped>
 .tr {
   display: grid;
-  grid-template-columns: 0.5fr 1fr 0.5fr;
+  grid-template-columns: 0.5fr 1fr 0.5fr 0.5fr;
   width: 70vw;
   text-align: center;
   border: 1px solid #2275db; /* светлая общая граница */

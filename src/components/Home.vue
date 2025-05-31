@@ -19,6 +19,7 @@
         :endData="n.endDate"
         :startData="n.rentalStart"
         :price="n.price"
+        :activ="n.isActive"
       />
     </div>
 
@@ -75,7 +76,7 @@ const { data, isLoading, error, refetch } = useQuery({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
   padding: 20px;
 }

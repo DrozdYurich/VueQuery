@@ -123,7 +123,7 @@ const route = useRoute();
 const qClient = useQueryClient();
 const id = route.params.id;
 const pricePerHour = 100;
-const pricePerDay = 2000;
+const pricePerDay = 250;
 
 const selectedOption = ref("hour");
 const customHours = ref(null);
