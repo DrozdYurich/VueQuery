@@ -1,7 +1,6 @@
 <template>
   <div class="orders-container">
     <h1 class="orders-title">Мои заказы</h1>
-
     <div v-if="isLoading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Загружаем ваши заказы...</p>
@@ -12,13 +11,14 @@
       <button @click="refetch" class="retry-button">Попробовать снова</button>
     </div>
 
-    <div v-else-if="data && data.length > 0" class="orders-grid">
+    <div v-else-if="data.some((item) => item.isActive)" class="orders-grid">
       <CartInfo
         v-for="n in data.filter((item) => item.isActive)"
         :key="n.id"
         :number="n.id"
-        :remainingTime="n.title"
-        :price="n.views"
+        :endData="n.endDate"
+        :startData="n.rentalStart"
+        :price="n.price"
       />
     </div>
 

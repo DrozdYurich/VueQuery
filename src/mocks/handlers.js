@@ -44,7 +44,7 @@ let posts = [
     id: "6",
 
     price: 0,
-    isActive: true,
+    isActive: false,
     endDate: "",
     rentalStart: "",
   },

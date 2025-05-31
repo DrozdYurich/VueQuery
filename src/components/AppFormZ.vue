@@ -209,14 +209,17 @@ const changeData = async (data) => {
     console.log(error);
   }
 };
-const { mutate: updatePost } = useMutation({
+const { mutateAsync: updatePost } = useMutation({
   mutationFn: changeData,
   onSuccess: () => {
     qClient.invalidateQueries(["posts"]);
+    router.push({
+      name: "home",
+    });
   },
 });
 // Обработка сабмита формы
-const onFormSubmit = ({ valid }) => {
+const onFormSubmit = async ({ valid }) => {
   if (valid) {
     const falidData = {
       id: route.params.id,
@@ -225,9 +228,8 @@ const onFormSubmit = ({ valid }) => {
       isActive: true,
       endDate: formatDate(initialValues.data),
     };
-    updatePost(falidData);
+    await updatePost(falidData);
     console.log("Submitted data:", falidData);
-    // Здесь можно добавить вызов мутации для сохранения данных
   }
 };
 

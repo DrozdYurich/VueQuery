@@ -1,35 +1,76 @@
 <template>
-  <tr class="bg-white mb-0 py-0 even:bg-gray-100">
-    <!-- Номер -->
-    <td
-      class="px-7 py-2 text-blue-700 font-semibold border border-blue-200 text-center"
-    >
-      {{ number }}
-    </td>
-
-    <!-- Время, которое осталось -->
-    <td class="px-7 py-2 text-blue-600 border border-blue-200 text-center">
-      {{ remainingTime }}
-    </td>
-
-    <!-- Цена -->
-    <td class="px-7 py-2 text-gray-700 border border-blue-200 text-center">
-      <Tag severity="info" :value="price + '₽'" />
-    </td>
-  </tr>
+  <div class="tr">
+    <div class="td">{{ number }}</div>
+    <div class="td">{{ timeLeft }}</div>
+    <div class="td">
+      <Tag severity="info" :value="price + '₽'" class="w-full" />
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { Tag } from "primevue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { computed } from "vue";
+const now = ref(new Date());
 
 const props = defineProps({
   number: [String, Number],
-  remainingTime: String,
+  startData: String,
+  endData: String,
   price: [String, Number],
+});
+const timeLeft = computed(() => {
+  const diffMs = new Date(props.endData) - now.value; // разница в миллисекундах
+  if (diffMs <= 0) {
+    return "Аренда завершена";
+  }
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (n) => n.toString().padStart(2, "0");
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+});
+
+let timer;
+
+onMounted(() => {
+  timer = setInterval(() => {
+    now.value = new Date();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  clearInterval(timer);
 });
 </script>
 
 <style scoped>
+.tr {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr 0.5fr;
+  width: 70vw;
+  text-align: center;
+  border: 1px solid #cbd5e1; /* светлая общая граница */
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.td {
+  padding: 8px 12px;
+  border-right: 1px solid #cbd5e1; /* светлая граница справа */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Убираем границу у последнего столбца */
+.td:last-child {
+  border-right: none;
+}
+
 @media (max-width: 550px) {
   .card {
     width: 80vw;
