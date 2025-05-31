@@ -16,7 +16,7 @@ const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 // Получить все посты
 export async function getPosts() {
-  await delay(200);
+  await delay(0);
   return [...posts]; // возвращаем копию массива
 }
 
@@ -35,7 +35,7 @@ export async function createPost(newPost) {
 
 // Обновить пост по id
 export async function updatePost(id, updatedData) {
-  await delay(200);
+  await delay(0);
 
   const postIndex = posts.findIndex((post) => post.id === id);
   if (postIndex === -1) {
@@ -52,7 +52,7 @@ export async function updatePost(id, updatedData) {
 
 // Удалить пост по id
 export async function deletePost(id) {
-  await delay(200);
+  await delay(0);
 
   const initialLength = posts.length;
   posts = posts.filter((post) => post.id !== id);

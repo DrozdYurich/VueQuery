@@ -52,13 +52,12 @@ import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 import CartInfo from "./CartInfo.vue";
 import { useRouter } from "vue-router";
-
+import { getPosts } from "@/initialState";
 const router = useRouter();
-
-const getPosts = async () => {
+const getPostss = async () => {
   try {
-    const resp = await axios.get("api/posts");
-    return resp.data;
+    const resp = await getPosts();
+    return resp;
   } catch (error) {
     throw new Error("Не удалось загрузить заказы");
   }
@@ -66,7 +65,7 @@ const getPosts = async () => {
 
 const { data, isLoading, error, refetch } = useQuery({
   queryKey: ["posts"],
-  queryFn: getPosts,
+  queryFn: getPostss,
   staleTime: 1000 * 60 * 5,
 });
 </script>

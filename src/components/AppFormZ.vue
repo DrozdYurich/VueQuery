@@ -111,7 +111,7 @@ import { Button, InputNumber, Message } from "primevue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-
+import { updatePost } from "@/initialState";
 const router = useRouter();
 const route = useRoute();
 const qClient = useQueryClient();
@@ -207,13 +207,13 @@ function formatDate(date) {
 }
 const changeData = async (data) => {
   try {
-    const resp = await axios.put(`/api/posts/${id}`, data);
-    return resp.data;
+    const resp = await updatePost(id, data);
+    return resp;
   } catch (error) {
     console.log(error);
   }
 };
-const { mutateAsync: updatePost, isPending } = useMutation({
+const { mutateAsync: updatePosts, isPending } = useMutation({
   mutationFn: changeData,
   onSuccess: () => {
     qClient.invalidateQueries(["posts"]);
@@ -232,7 +232,7 @@ const onFormSubmit = async ({ valid }) => {
       isActive: true,
       endDate: formatDate(initialValues.data),
     };
-    await updatePost(falidData);
+    await updatePosts(falidData);
     console.log("Submitted data:", falidData);
   }
 };
