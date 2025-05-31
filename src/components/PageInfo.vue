@@ -43,7 +43,7 @@ const router = useRouter();
 const getData = async () => {
   try {
     const response = await getPosts();
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
