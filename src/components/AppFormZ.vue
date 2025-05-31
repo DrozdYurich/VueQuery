@@ -20,8 +20,10 @@
             type="button"
             :style="{ borderColor: 'blue' }"
             :class="{
-              'bg-blue-600 text-white': selectedOption === 'hour',
-              'bg-gray-200 text-gray-700': selectedOption !== 'hour',
+              'bg-blue-600 text-white hover:bg-blue-700':
+                selectedOption === 'hour',
+              'bg-gray-200 text-gray-700 hover:bg-gray-300':
+                selectedOption !== 'hour',
             }"
             class="flex-1 py-2 rounded-md"
             @click="selectOption('hour')"
@@ -32,8 +34,10 @@
             type="button"
             :style="{ borderColor: 'blue' }"
             :class="{
-              'bg-blue-600 text-white': selectedOption === 'day',
-              'bg-gray-200 text-gray-700': selectedOption !== 'day',
+              'bg-blue-600 text-white hover:bg-blue-700':
+                selectedOption === 'day',
+              'bg-gray-200 text-gray-700 hover:bg-gray-300':
+                selectedOption !== 'day',
             }"
             class="flex-1 py-2 rounded-md"
             @click="selectOption('day')"
@@ -44,8 +48,10 @@
             type="button"
             :style="{ borderColor: 'blue' }"
             :class="{
-              'bg-blue-600 text-white': selectedOption === 'custom',
-              'bg-gray-200 text-gray-700': selectedOption !== 'custom',
+              'bg-blue-600 text-white hover:bg-blue-700':
+                selectedOption === 'custom',
+              'bg-gray-200 text-gray-700 hover:bg-gray-300':
+                selectedOption !== 'custom',
             }"
             class="flex-1 py-2 rounded-md"
             @click="selectOption('custom')"
