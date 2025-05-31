@@ -29,10 +29,12 @@
 </template>
 <script setup>
 import { Button, Toolbar } from "primevue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import useGoto from "./methods/useGoto";
+import { useRoute } from "vue-router";
 const { gotoMy, gotoPage } = useGoto();
 const activeBtn = ref();
+const route = useRoute();
 function handleMenuClick(item) {
   activeBtn.value = item.key;
   if (item.command) {
@@ -45,14 +47,24 @@ const items = ref([
     label: "Заказать",
     icon: "pi pi-shopping-cart",
     command: gotoPage,
+    routeName: "page",
   },
   {
     key: "my",
     label: "Профиль",
     icon: "pi pi-user",
     command: gotoMy,
+    routeName: "home",
   },
 ]);
+watch(
+  () => route.name,
+  (newRoute) => {
+    const found = items.value.find((item) => item.routeName === newRoute);
+    activeBtn.value = found ? found.key : null;
+  },
+  { immediate: true }
+);
 </script>
 <style>
 .p-toolbar-center {

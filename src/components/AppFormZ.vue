@@ -9,6 +9,10 @@
       <h2 class="text-2xl font-semibold text-blue-700 mb-4 text-center">
         Оформление аренды
       </h2>
+      <div v-if="isPending" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Подождите...</p>
+      </div>
       <div class="flex flex-col gap-2">
         <label class="text-sm font-medium text-gray-700">Время аренды</label>
         <div class="flex gap-3">
@@ -209,7 +213,7 @@ const changeData = async (data) => {
     console.log(error);
   }
 };
-const { mutateAsync: updatePost } = useMutation({
+const { mutateAsync: updatePost, isPending } = useMutation({
   mutationFn: changeData,
   onSuccess: () => {
     qClient.invalidateQueries(["posts"]);
@@ -239,7 +243,29 @@ const goToPage = () => {
 </script>
 
 <style scoped>
-/* Кастомные стили для кнопок */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 15px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .p-button {
   font-weight: 500;
   transition: background-color 0.2s ease-in-out;
