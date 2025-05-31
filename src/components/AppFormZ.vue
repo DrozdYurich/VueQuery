@@ -207,7 +207,7 @@ function formatDate(date) {
 }
 const changeData = async (data) => {
   try {
-    const resp = await axios.put(`/api/posts/${id}`, data);
+    const resp = await axios.put(`http://localhost:3000/posts/${id}`, data);
     return resp.data;
   } catch (error) {
     console.log(error);

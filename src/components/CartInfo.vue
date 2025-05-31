@@ -76,6 +76,7 @@ onUnmounted(() => {
 @media (max-width: 550px) {
   .card {
     width: 80vw;
+    http: ; //localhost:3000/posts
   }
 }
 </style>

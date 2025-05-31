@@ -2,7 +2,6 @@ import { HttpResponse, http, delay } from "msw";
 let posts = [
   {
     id: "1",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -10,7 +9,6 @@ let posts = [
   },
   {
     id: "2",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -18,7 +16,6 @@ let posts = [
   },
   {
     id: "3",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -26,7 +23,6 @@ let posts = [
   },
   {
     id: "4",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -34,7 +30,6 @@ let posts = [
   },
   {
     id: "5",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -42,7 +37,6 @@ let posts = [
   },
   {
     id: "6",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -57,7 +51,6 @@ let posts = [
   },
   {
     id: "8",
-
     price: 0,
     isActive: false,
     endDate: "",
@@ -65,7 +58,6 @@ let posts = [
   },
   {
     id: "9",
-
     price: 0,
     isActive: false,
     endDate: "",

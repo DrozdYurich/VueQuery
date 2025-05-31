@@ -57,7 +57,7 @@ const router = useRouter();
 
 const getPosts = async () => {
   try {
-    const resp = await axios.get("/api/posts");
+    const resp = await axios.get("http://localhost:3000/posts");
     return resp.data;
   } catch (error) {
     throw new Error("Не удалось загрузить заказы");
