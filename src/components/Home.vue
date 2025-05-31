@@ -76,7 +76,7 @@ const { data, isLoading, error, refetch } = useQuery({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 80%;
+
   margin: 0 auto;
   padding: 20px;
 }
@@ -116,8 +116,6 @@ const { data, isLoading, error, refetch } = useQuery({
 .orders-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(300px, 1fr));
-
-  margin: auto;
 }
 
 .empty-state {

@@ -6,6 +6,7 @@ import PrimeVue from "primevue/config";
 import App from "./App.vue";
 import router from "./router";
 import Aura from "@primeuix/themes/aura";
+import ToastService from "primevue/toastservice";
 const app = createApp(App);
 app.use(createPinia());
 app.use(PrimeVue, {
@@ -15,6 +16,7 @@ app.use(PrimeVue, {
 });
 app.use(router);
 app.use(VueQueryPlugin);
+app.use(ToastService);
 async function prepare() {
   if (import.meta.env.DEV) {
     const { worker } = await import("./mocks/browser");
